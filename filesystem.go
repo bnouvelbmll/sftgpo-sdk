@@ -14,6 +14,7 @@ const (
 	CryptedFilesystemProvider                             // Local encrypted
 	SFTPFilesystemProvider                                // SFTP
 	HTTPFilesystemProvider                                // HTTP
+	SQLFilesystemProvider                                 // SQL
 )
 
 // GetProviderByName returns the FilesystemProvider matching a given name
@@ -34,6 +35,8 @@ func GetProviderByName(name string) FilesystemProvider {
 		return SFTPFilesystemProvider
 	case "6", "httpfs":
 		return HTTPFilesystemProvider
+	case "7", "sqlfs":
+		return SQLFilesystemProvider
 	}
 
 	// TODO think about returning an error value instead of silently defaulting to LocalFilesystemProvider
@@ -57,6 +60,8 @@ func (p FilesystemProvider) Name() string {
 		return "sftpfs"
 	case HTTPFilesystemProvider:
 		return "httpfs"
+	case SQLFilesystemProvider:
+		return "sqlfs"
 	}
 	return "" // let's not claim to be
 }
@@ -78,6 +83,8 @@ func (p FilesystemProvider) ShortInfo() string {
 		return "SFTP"
 	case HTTPFilesystemProvider:
 		return "HTTP"
+	case SQLFilesystemProvider:
+		return "SQL"
 	}
 	return ""
 }
@@ -279,6 +286,22 @@ type HTTPFsConfig struct {
 	APIKey   kms.BaseSecret `json:"api_key,omitempty"`
 }
 
+
+type BaseSQLFsConfig struct {
+	DriverName string `json:"driver_name,omitempty"`
+	BaseTable string  `json:"base_table,omitempty"`
+	Fields [] string  `json:"fields,omitempty"`
+}
+
+
+type SQLFsConfig struct {
+	BaseSQLFsConfig
+	ConnectionString kms.BaseSecret `json:"connectionstring,omitempty"`
+}
+
+
+
+
 // Filesystem defines filesystem details
 type Filesystem struct {
 	Provider     FilesystemProvider `json:"provider"`
@@ -288,4 +311,5 @@ type Filesystem struct {
 	CryptConfig  CryptFsConfig      `json:"cryptconfig,omitempty"`
 	SFTPConfig   SFTPFsConfig       `json:"sftpconfig,omitempty"`
 	HTTPConfig   HTTPFsConfig       `json:"httpconfig,omitempty"`
+	SQLConfig    SQLFsConfig        `json:"sqlconfig,omitempty"`
 }
