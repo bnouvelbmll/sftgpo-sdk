@@ -1,5 +1,6 @@
 package sdk
 
+import "fmt"
 import "github.com/sftpgo/sdk/kms"
 
 // FilesystemProvider defines the supported storage filesystems
@@ -39,6 +40,7 @@ func GetProviderByName(name string) FilesystemProvider {
 		return SQLFilesystemProvider
 	}
 
+	fmt.Print("Invalid choice - defaulting to local fs %s", name)
 	// TODO think about returning an error value instead of silently defaulting to LocalFilesystemProvider
 	return LocalFilesystemProvider
 }
@@ -296,7 +298,7 @@ type BaseSQLFsConfig struct {
 
 type SQLFsConfig struct {
 	BaseSQLFsConfig
-	ConnectionString kms.BaseSecret `json:"connectionstring,omitempty"`
+	ConnectionString kms.BaseSecret `json:"connection_string,omitempty"`
 }
 
 
